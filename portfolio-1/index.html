@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaishnav Abhijeet | Frontend Developer</title>
+    <!-- Sharp, intentional typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Outfit:wght@100..900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Theme Variables */
+        :root {
+            --bg: #0a0a0c;
+            --surface: #141417;
+            --accent: #d4af37; /* Temple Gold */
+            --text-main: #f5f5f7;
+            --text-dim: #8a8a93;
+            
+            /* Universal Tilak Colors - Fixed across themes */
+            --tilak-u: #f5f5f7; 
+            --tilak-mark: #d4af37;
+
+            --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Royal Deep Sea Theme */
+        [data-theme="deepsea"] {
+            --bg: #050b18; 
+            --surface: #0a162d; 
+            --accent: #00d4ff; 
+            --text-main: #e0f2ff;
+            --text-dim: #6482ad;
+        }
+
+        /* Evergreen Theme */
+        [data-theme="evergreen"] {
+            --bg: #013220; 
+            --surface: #0B6E4F; 
+            --accent: #D1F2EB; 
+            --text-main: #D1F2EB;
+            --text-dim: #50C878;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.6s ease;
+        }
+
+        /* Editorial Typography Mix */
+        h1, h2, h3 { font-family: 'Fraunces', serif; letter-spacing: -0.02em; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Background Depth */
+        .bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.03) 0%, transparent 40%);
+            transition: background 0.6s ease;
+        }
+        
+        [data-theme="deepsea"] .bg-canvas {
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(0, 212, 255, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(0, 212, 255, 0.04) 0%, transparent 50%);
+        }
+
+        .bg-canvas::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0.25;
+            pointer-events: none;
+            background-image: var(--grain);
+            mix-blend-mode: overlay;
+        }
+
+        /* Fixed Tilak Animation Style */
+        .tilak-container {
+            position: relative;
+            width: 45px;
+            height: 75px;
+            margin: 0 auto 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .tilak-container {
+                width: 60px;
+                height: 100px;
+                margin-bottom: 2rem;
+            }
+        }
+        .tilak-u {
+            fill: none;
+            stroke: var(--tilak-u);
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-dasharray: 200;
+            stroke-dashoffset: 200;
+            animation: drawStroke 1.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+            transition: stroke 0.5s ease;
+        }
+        .tilak-dot {
+            fill: var(--tilak-mark);
+            opacity: 0;
+            transform: scaleY(0);
+            transform-origin: center;
+            animation: revealDot 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 1s forwards;
+            transition: fill 0.5s ease;
+        }
+        @keyframes drawStroke { to { stroke-dashoffset: 0; } }
+        @keyframes revealDot { to { opacity: 1; transform: scaleY(1); } }
+
+        /* Name Reveal */
+        .hero-name {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 1s ease 1.5s forwards;
+        }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* Section Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Project Cards */
+        .project-card {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.4s ease, border-color 0.4s ease, background-color 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        @media (hover: hover) {
+            .project-card:hover {
+                transform: translateY(-5px);
+                border-color: var(--accent);
+            }
+            .project-card::before {
+                content: "";
+                position: absolute;
+                top: 0; left: 0; width: 100%; height: 2px;
+                background: var(--accent);
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform 0.4s ease;
+            }
+            .project-card:hover::before { transform: scaleX(1); }
+        }
+
+        /* Custom Button */
+        .btn-gold {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.6rem 1.2rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+        }
+        @media (min-width: 768px) {
+            .btn-gold {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.75rem;
+            }
+        }
+        .btn-gold:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        /* Theme Toggle Button Styling */
+        .theme-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: var(--accent);
+        }
+        .theme-toggle:hover {
+            background: var(--accent);
+            color: var(--bg);
+            transform: rotate(15deg);
+        }
+
+        /* Grid Pattern */
+        .grid-accent {
+            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+            transition: background-image 0.5s ease;
+        }
+        [data-theme="deepsea"] .grid-accent {
+            background-image: radial-gradient(rgba(0, 212, 255, 0.08) 1px, transparent 0);
+        }
+
+        input, textarea {
+            background: rgba(255,255,255,0.03) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            color: white !important;
+            border-radius: 0 !important;
+        }
+        input:focus, textarea:focus {
+            border-color: var(--accent) !important;
+            outline: none;
+        }
+    </style>
+</head>
+<body class="grid-accent">
+    <div class="bg-canvas"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 px-6 md:px-8 py-4 md:py-6 flex justify-between items-center backdrop-blur-md border-b border-white/5">
+        <div class="mono text-xs md:text-sm font-bold tracking-widest text-accent">V. ABHIJEET</div>
+        
+        <div class="flex items-center gap-4 md:gap-8">
+            <div class="flex gap-4 md:gap-8 text-[9px] md:text-[10px] uppercase tracking-[0.15em] md:tracking-[0.2em] font-bold text-dim">
+                <a href="#about" class="nav-link hover:text-white transition-colors">About</a>
+                <a href="#work" class="nav-link hover:text-white transition-colors">Work</a>
+                <a href="#contact" class="nav-link hover:text-white transition-colors">Connect</a>
+            </div>
+            <!-- Cycle Theme Button -->
+            <button id="themeSwitcher" class="theme-toggle" title="Cycle Theme">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="min-h-screen flex flex-col items-center justify-center text-center px-6">
+        <div class="tilak-container">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path class="tilak-u" d="M25,20 C25,80 75,80 75,20" />
+                <rect class="tilak-dot" x="47" y="15" width="6" height="45" rx="3" />
+            </svg>
+        </div>
+        <div class="hero-name w-full max-w-4xl">
+            <h1 class="text-4xl sm:text-6xl md:text-8xl mb-4 font-black">Vaishnav Abhijeet</h1>
+            <p class="mono text-accent text-[10px] sm:text-xs md:text-base tracking-[0.2em] sm:tracking-[0.3em] uppercase mb-8 leading-relaxed">
+                Frontend Developer | React | JS | Async | UI Effects
+            </p>
+            <div class="w-px h-16 md:h-24 bg-gradient-to-b from-accent to-transparent mx-auto"></div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="max-w-4xl mx-auto py-20 md:py-32 px-6 md:px-8 reveal">
+        <div class="grid md:grid-cols-3 gap-8 md:gap-12">
+            <div class="md:col-span-1">
+                <h2 class="text-3xl text-accent italic mb-2 md:mb-4">Origins.</h2>
+                <div class="text-[10px] mono text-dim uppercase tracking-tighter">Human.js</div>
+            </div>
+            <div class="md:col-span-2">
+                <p class="text-lg md:text-2xl leading-relaxed text-text-dim">
+                    I translate complex logic into <span class="text-white italic">expressive interfaces</span>. 
+                    Focused on the intersection of technical performance and emotional design. 
+                    Based in India, building for the web.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="max-w-6xl mx-auto py-20 md:py-32 px-6 md:px-8 reveal">
+        <h2 class="text-3xl md:text-4xl mb-12 md:mb-16 text-center italic">The Toolset</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-px bg-white/5 border border-white/5">
+            <div class="p-6 md:p-8 bg-surface">
+                <div class="text-accent mono text-xs mb-2">01</div>
+                <h3 class="text-xl">JS/DOM</h3>
+                <p class="text-dim text-sm mt-2">Core manipulation & performance.</p>
+            </div>
+            <div class="p-6 md:p-8 bg-surface">
+                <div class="text-accent mono text-xs mb-2">02</div>
+                <h3 class="text-xl">React</h3>
+                <p class="text-dim text-sm mt-2">Context API, Hooks, & Router.</p>
+            </div>
+            <div class="p-6 md:p-8 bg-surface">
+                <div class="text-accent mono text-xs mb-2">03</div>
+                <h3 class="text-xl">Async</h3>
+                <p class="text-dim text-sm mt-2">Axios, Promises & Real-time data.</p>
+            </div>
+            <div class="p-6 md:p-8 bg-surface">
+                <div class="text-accent mono text-xs mb-2">04</div>
+                <h3 class="text-xl">Styling</h3>
+                <p class="text-dim text-sm mt-2">Tailwind & CSS Architecture.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="work" class="max-w-6xl mx-auto py-20 md:py-32 px-6 md:px-8 reveal">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 gap-4">
+            <h2 class="text-4xl md:text-5xl italic">Selected Work</h2>
+            <div class="mono text-[10px] md:text-xs text-dim">2024—2025</div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <div class="project-card p-8 md:p-12 group">
+                <div class="mb-6 md:mb-8 overflow-hidden bg-black/20 aspect-video flex items-center justify-center bg-[url('project-1.png')] bg-cover bg-center bg-no-repeat">
+                </div>
+                <h3 class="text-xl md:text-2xl mb-3 md:mb-4">Library Landing Page</h3>
+                <p class="text-dim mb-6 md:mb-8 text-xs md:text-sm leading-relaxed">A modern library landing page built with HTML, CSS, JavaScript, and Three.js featuring 3D interactions.</p>
+                <div class="flex flex-wrap gap-3 md:gap-4">
+                    <a href="https://www.avmlibraryteghra.com/" target="_blank" class="btn-gold">Live View</a>
+                    <a href="https://github.com/abhijeet117/library-landing-page" target="_blank" class="btn-gold opacity-50 border-white text-white hover:bg-white">Github</a>
+                </div>
+            </div>
+            <div class="project-card p-8 md:p-12 group">
+                <div class="mb-6 md:mb-8 overflow-hidden bg-black/20 aspect-video flex items-center justify-center bg-[url('project-2.png')] bg-cover bg-center bg-no-repeat">
+                    <div class="text-white/10 italic text-2xl md:text-4xl group-hover:scale-110 transition-transform duration-700">Project_02</div>
+                </div>
+                <h3 class="text-xl md:text-2xl mb-3 md:mb-4">Dil Se Adventure</h3>
+                <p class="text-dim mb-6 md:mb-8 text-xs md:text-sm leading-relaxed">A visually engaging project showcasing Three.js integration with HTML, CSS, and JavaScript.</p>
+                <div class="flex flex-wrap gap-3 md:gap-4">
+                    <a href="https://abhijeet117.github.io/for-u/" target="_blank" class="btn-gold">Live View</a>
+                    <a href="https://github.com/abhijeet117/for-u" target="_blank" class="btn-gold opacity-50 border-white text-white hover:bg-white">Github</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Journey -->
+    <section class="max-w-4xl mx-auto py-20 md:py-32 px-6 md:px-8 reveal">
+        <div class="border-l-2 border-accent/30 pl-6 md:pl-12 py-4 md:py-8 relative">
+            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-accent shadow-[0_0_15px_rgba(212,175,55,0.5)]"></div>
+            <h2 class="text-2xl md:text-3xl mb-8">Learning Journey</h2>
+            <div class="space-y-10 md:space-y-12">
+                <div>
+                    <h4 class="mono text-accent text-[10px] md:text-sm uppercase mb-2">Currently Cracking</h4>
+                    <h3 class="text-lg md:text-xl">Data Structures & Algorithms</h3>
+                    <p class="text-dim mt-2 text-sm italic">Solving the architectural puzzles that power efficient frontends.</p>
+                </div>
+                <div class="grid grid-cols-7 gap-1 md:gap-2 max-w-xs" id="journey-grid">
+                    <script>
+                        const grid = document.getElementById('journey-grid');
+                        for(let i=0; i<28; i++) {
+                            const div = document.createElement('div');
+                            div.className = `aspect-square bg-white/10 opacity-${Math.floor(Math.random()*80) + 20}`;
+                            if(Math.random() > 0.5) div.classList.add('bg-accent-dynamic');
+                            grid.appendChild(div);
+                        }
+                        const style = document.createElement('style');
+                        style.textContent = '.bg-accent-dynamic { background-color: var(--accent) !important; }';
+                        document.head.appendChild(style);
+                    </script>
+                </div>
+                <p class="mono text-[9px] md:text-[10px] text-dim uppercase tracking-tighter">Status: Constant Evolution //</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="max-w-6xl mx-auto py-20 md:py-32 px-6 md:px-8 reveal">
+        <div class="bg-surface p-8 md:p-24 relative overflow-hidden">
+            <div class="absolute right-0 top-0 text-7xl md:text-[10rem] font-black text-white/[0.02] select-none translate-x-1/4 -translate-y-1/4">HIRE</div>
+            <div class="max-w-xl relative z-10">
+                <h2 class="text-3xl md:text-5xl italic mb-6 md:mb-8">Let's build something significant.</h2>
+                <form id="contactForm" class="space-y-4 md:space-y-6 mb-12">
+                    <input type="text" id="userName" placeholder="Your Name" class="w-full p-4 text-xs md:text-sm" required>
+                    <input type="email" id="userEmail" placeholder="Email Address" class="w-full p-4 text-xs md:text-sm" required>
+                    <textarea id="projectDesc" placeholder="The Project" rows="4" class="w-full p-4 text-xs md:text-sm" required></textarea>
+                    <button type="submit" class="btn-gold w-full py-4 text-base md:text-lg">Send Inquiry via WhatsApp</button>
+                </form>
+
+                <div class="flex flex-wrap gap-6 md:gap-8 items-center border-t border-white/10 pt-8">
+                    <a href="https://github.com/abhijeet117" target="_blank" class="social-icon mono text-[10px] uppercase tracking-widest text-dim hover:text-white">Github</a>
+                    <a href="https://www.linkedin.com/in/abhijeet-kumar-sah-35890a353" target="_blank" class="social-icon mono text-[10px] uppercase tracking-widest text-dim hover:text-white">LinkedIn</a>
+                    <a href="https://x.com/abhijeet117_" target="_blank" class="social-icon mono text-[10px] uppercase tracking-widest text-dim hover:text-white">X</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 border-t border-white/5 px-6 text-center mono text-dim text-[9px] md:text-[10px] uppercase tracking-widest leading-loose">
+        &copy; 2026 Vaishnav Abhijeet — India <br> Designed for Performance
+    </footer>
+
+    <script>
+        const themeBtn = document.getElementById('themeSwitcher');
+        const body = document.body;
+        const themes = ['default', 'deepsea', 'evergreen'];
+        let currentThemeIndex = 0;
+        
+        themeBtn.addEventListener('click', () => {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const theme = themes[currentThemeIndex];
+            
+            body.removeAttribute('data-theme');
+            if (theme !== 'default') {
+                body.setAttribute('data-theme', theme);
+            }
+        });
+
+        // WhatsApp Integration Logic
+        const contactForm = document.getElementById('contactForm');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const message = document.getElementById('projectDesc').value;
+            
+            // Your Phone Number
+            const phoneNumber = "918002584052"; 
+            
+            const text = `*New Portfolio Inquiry*%0A%0A*Name:* ${name}%0A*Email:* ${email}%0A*Project:* ${message}`;
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${text}`;
+            
+            window.open(whatsappUrl, '_blank');
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
