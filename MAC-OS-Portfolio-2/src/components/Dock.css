@@ -1,0 +1,52 @@
+.dock {
+  display: flex;
+  position: absolute;
+  bottom: 0.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(44, 43, 43, 0.386);
+  border-radius: 1rem;
+  padding-inline: 0.65rem;
+  padding-block: 0.5rem;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  gap: 0.6rem;
+}
+.dock .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem;
+  border-radius: 0.5rem;
+  aspect-ratio: 1/1;
+  width: 3.5rem;
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.dock .pdf {
+  background: linear-gradient(to right, rgb(236, 36, 36));
+}
+.dock .github, .dock .cli {
+  background-color: black;
+}
+.dock .calender,
+.dock .mail {
+  background: linear-gradient(to right, rgb(62, 66, 194), rgb(12, 17, 176));
+}
+.dock .spotify {
+  background: linear-gradient(to right, rgba(61, 203, 42, 0.811), rgb(37, 146, 84));
+}
+.dock .link {
+  background: linear-gradient(to right, rgba(160, 54, 144, 0.811), rgb(214, 17, 224));
+}
+.dock .note {
+  background: linear-gradient(to right, rgba(221, 181, 22, 0.811), rgba(173, 186, 59, 0.7));
+}
+.dock .icon:hover {
+  scale: 1.25;
+  transform: translateY(-20%);
+}
+.dock .icon:hover + .icon,
+.dock .icon:has(+ .icon:hover) {
+  scale: 1.1;
+  transform: translateY(-10%);
+}/*# sourceMappingURL=Dock.css.map */
